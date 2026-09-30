@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block content %}
+<section class="hero"><span class="badge">TF-IDF + Logistic Regression · {{ n_skills }} skills tracked</span>
+<h1>Screen resumes faster with <em>machine learning</em></h1>
+<p>Upload PDF resumes to extract structured data, predict the best-fit role, score resume quality and rank candidates against any job.</p>
+<div class="row" style="justify-content:center"><a class="btn" href="{{ url_for('signup') }}">Create free account</a><a class="btn ghost" href="{{ url_for('about') }}">How it works</a></div></section>
+<div class="grid g4" style="margin-bottom:20px">
+<div class="card stat"><b>{{ m.classes }}</b><span class="muted">job roles classified</span></div>
+<div class="card stat"><b>{{ n_skills }}</b><span class="muted">skills detected</span></div>
+<div class="card stat"><b>14+</b><span class="muted">parameters extracted</span></div>
+<div class="card stat"><b>2</b><span class="muted">portals: candidate &amp; HR</span></div></div>
+<div class="grid g3">
+<div class="card"><div class="icon">📄</div><h3>Deep resume parsing</h3><p class="muted">Name, contact, links, skills by category, experience, education level, certifications and sections.</p></div>
+<div class="card"><div class="icon">🤖</div><h3>ML role prediction</h3><p class="muted">A trained TF-IDF classifier returns the top 3 roles with probabilities.</p></div>
+<div class="card"><div class="icon">✅</div><h3>Resume quality score</h3><p class="muted">A 100-point ATS-style score with a breakdown and concrete tips to improve.</p></div>
+<div class="card"><div class="icon">💼</div><h3>Job matching</h3><p class="muted">Ranks jobs by skill coverage, text similarity and experience fit, and shows skill gaps.</p></div>
+<div class="card"><div class="icon">🏢</div><h3>Bulk HR screening</h3><p class="muted">Upload up to 20 resumes for a job, get a ranked shortlist and export to CSV.</p></div>
+<div class="card"><div class="icon">🔐</div><h3>Private by design</h3><p class="muted">Hashed passwords, role-based access and no resume files saved to disk.</p></div></div>
+{% endblock %}

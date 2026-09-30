@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}About{% endblock %}{% block content %}
+<div class="card"><h2>About the platform</h2><p>The Machine Learning Based Resume Screening Platform parses PDF resumes, classifies them into job roles with a trained model, scores resume quality and ranks candidates for jobs.</p></div>
+<div class="grid g2"><div class="card"><h2>Model</h2><dl class="kv"><dt>Algorithm</dt><dd>{{ m.algorithm }}</dd><dt>Roles</dt><dd>{{ m.classes }}</dd><dt>Training data</dt><dd>{{ m.source }}</dd>
+<dt>Hold-out accuracy</dt><dd>{{ m.accuracy }}%</dd><dt>Macro F1</dt><dd>{{ m.macro_f1 }}%</dd><dt>5-fold CV</dt><dd>{{ m.cv_mean }}% ± {{ m.cv_std }}</dd></dl>
+{% if not m.real_data %}<p class="chip warn" style="margin-top:14px;white-space:normal">These scores come from generated bootstrap data, so they overstate real-world accuracy. Retrain on real resumes with <code>python train_model.py --csv your_data.csv</code>.</p>{% endif %}</div>
+<div class="card"><h2>Model comparison (5-fold CV)</h2><table><tr><th>Algorithm</th><th>Accuracy</th></tr>
+{% for n, v in m.comparison.items() %}<tr><td>{{ n }}{% if n == m.best %} <span class="chip ok">selected</span>{% endif %}</td><td>{{ v[0] }}% ± {{ v[1] }}</td></tr>{% endfor %}</table></div>
+<div class="card"><h2>Extracted parameters</h2><p class="muted">Name · email · phone · LinkedIn · GitHub · {{ n_skills }} skills in {{ groups|length }} groups · years of experience · education level · education lines · certifications · sections · word count · role probabilities · resume quality score</p>
+<h2 style="margin-top:18px">Match score</h2><p class="muted">55% required-skill coverage + 25% TF-IDF text similarity + 20% experience fit.</p></div></div>
+{% endblock %}

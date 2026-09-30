@@ -1,0 +1,7 @@
+{% macro ring(value, label) %}
+<div class="ring"><svg viewBox="0 0 36 36"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#7c3aed"/></linearGradient></defs>
+<circle class="bg" cx="18" cy="18" r="15.9155"/><circle class="fg" cx="18" cy="18" r="15.9155" stroke-dasharray="{{ [value,100]|min }}, 100"/></svg>
+<div class="num">{{ value|round|int }}<small>%</small></div><span>{{ label }}</span></div>
+{% endmacro %}
+{% macro chips(items, cls='') %}{% for s in items %}<span class="chip {{ cls }}">{{ s }}</span>{% else %}<span class="muted small">None</span>{% endfor %}{% endmacro %}
+{% macro vclass(v) %}v-{{ v.split(' ')[0] }}{% endmacro %}

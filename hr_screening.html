@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% block title %}Screen Candidates{% endblock %}{% block content %}
+{% from "macros.html" import chips, vclass %}
+<div class="card"><h2>Screen candidates</h2><p class="muted">Pick a job, upload up to 20 PDF resumes and get a ranked shortlist.</p>
+<form method="post" enctype="multipart/form-data"><label>Job</label>
+<select name="job_id">{% for j in jobs %}<option value="{{ j.id }}" {{ 'selected' if job and job.id == j.id }}>{{ j.title }} · {{ j.company }}</option>{% endfor %}</select>
+<label class="drop"><input id="f" type="file" name="resumes" accept=".pdf" multiple required><div style="font-size:2rem">📂</div><b id="n">Click to choose PDF resumes</b><div class="muted small">you can select multiple files</div></label>
+<button>Rank candidates</button></form></div>
+{% if rows is defined %}<div class="card"><div class="row" style="justify-content:space-between"><h2>Results for {{ job.title }}</h2>
+{% if rows %}<a class="btn ghost" href="{{ url_for('export', rid=rid) }}">⬇ Export CSV</a>{% endif %}</div>
+<div class="tw"><table><tr><th>#</th><th>Candidate</th><th>Exp / Edu</th><th>Predicted role</th><th>Match</th><th>Skills</th></tr>
+{% for r in rows %}<tr><td><span class="rank {{ 'r1' if r.rank == 1 }}">{{ r.rank }}</span></td>
+<td><b>{{ r.name }}</b><br><span class="muted small">{{ r.email }}<br>{{ r.file }}</span><br><button type="button" class="btn ghost sm ai" data-i="{{ loop.index0 }}">🤖 AI notes</button><div class="ainote small"></div></td>
+<td>{{ r.experience }} yrs<br><span class="muted small">{{ r.education_level }}</span></td><td>{{ r.category }}<br><span class="muted small">quality {{ r.ats }}/100</span></td>
+<td><b>{{ r.match }}%</b><br><span class="verdict {{ vclass(r.verdict) }}">{{ r.verdict }}</span></td>
+<td>{{ chips(r.matched, 'ok') }}{{ chips(r.missing, 'miss') }}</td></tr>
+{% else %}<tr><td colspan="6" class="muted">No readable resumes.</td></tr>{% endfor %}</table></div></div>{% endif %}
+<script>document.getElementById('f').onchange=e=>{const n=e.target.files.length;document.getElementById('n').textContent=n?n+' file(s) selected':'Click to choose PDF resumes'}</script>
+{% if rows %}<script>function add(p,t,x,c){const e=document.createElement(t);e.textContent=x;if(c)e.className=c;p.appendChild(e);return e}
+function lst(p,title,a){if(!a||!a.length)return;add(p,'div',title,'ai-h');const u=add(p,'ul','');a.forEach(x=>add(u,'li',x))}
+document.querySelectorAll('.ai').forEach(b=>b.onclick=async()=>{const o=b.nextElementSibling;b.disabled=true;o.textContent='Thinking… this can take a minute.';
+try{const r=await fetch('/api/ai/explain/{{ rid }}/'+b.dataset.i,{method:'POST'});const j=await r.json();o.textContent='';
+if(j.error){add(o,'div',j.error,'chip warn')}else{add(o,'p',j.summary);lst(o,'Concerns',j.concerns);lst(o,'Interview focus',j.interview_focus)}}
+catch(e){o.textContent='Request failed.'}b.disabled=false})
+</script>{% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}Job Matches{% endblock %}{% block content %}
+{% from "macros.html" import chips, vclass %}
+<div class="row" style="justify-content:space-between;margin-bottom:16px"><div><h2 style="font-size:1.5rem">Recommended jobs for {{ d.name }}</h2>
+<span class="muted small">Score = 55% skill coverage + 25% text similarity + 20% experience fit</span></div>
+<a class="btn ghost" href="{{ url_for('result') }}">← Back to analysis</a></div>
+{% for j in d.recs %}<div class="card"><div class="row" style="justify-content:space-between">
+<div><h2>{{ j.title }}</h2><div class="muted small">{{ j.company }} · {{ j.location or 'Location flexible' }}{% if j.min_exp %} · {{ j.min_exp }}+ yrs{% endif %}</div></div>
+<div style="text-align:right"><b style="font-size:1.6rem">{{ j.match }}%</b><br><span class="verdict {{ vclass(j.verdict) }}">{{ j.verdict }}</span></div></div>
+<div class="bar" style="margin:12px 0"><i style="width:{{ j.match }}%"></i></div>
+<p class="muted">{{ j.description }}</p>
+<div class="grid g2"><div><p class="small muted" style="margin:0">You have</p>{{ chips(j.matched, 'ok') }}</div><div><p class="small muted" style="margin:0">Skill gaps</p>{{ chips(j.missing, 'miss') }}</div></div></div>
+{% else %}<div class="card muted">No jobs available yet.</div>{% endfor %}
+{% endblock %}

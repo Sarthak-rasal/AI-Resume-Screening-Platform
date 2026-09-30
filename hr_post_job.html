@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block title %}Post Job{% endblock %}{% block content %}
+<div class="grid g2"><div class="card"><h2>Post a job</h2><form method="post">
+<label>Title</label><input name="title" required><label>Company</label><input name="company" required>
+<label>Location</label><input name="location"><label>Required skills (comma separated)</label><input name="skills" placeholder="python, sql, docker">
+<label>Minimum experience (years)</label><input type="number" name="min_exp" min="0" max="40" value="0">
+<label>Description</label><textarea name="description" rows="4"></textarea><button style="width:100%">Post job</button></form></div>
+<div class="card"><h2>Current openings ({{ jobs|length }})</h2>{% for j in jobs %}<p style="margin:0 0 10px"><b>{{ j.title }}</b><br><span class="muted small">{{ j.company }} · {{ j.location }} · {{ j.min_exp }}+ yrs</span></p>{% endfor %}</div></div>
+{% endblock %}

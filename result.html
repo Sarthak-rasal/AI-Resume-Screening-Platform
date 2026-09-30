@@ -1,0 +1,33 @@
+{% extends "base.html" %}{% block title %}Results{% endblock %}{% block content %}
+{% from "macros.html" import ring, chips %}
+<div class="card"><div class="row" style="justify-content:space-between"><div><h2 style="font-size:1.6rem">{{ d.name }}</h2>
+<div class="muted">{{ d.email }} · {{ d.phone }}</div>
+<div style="margin-top:6px">{% if d.links.linkedin %}<span class="chip">in {{ d.links.linkedin }}</span>{% endif %}{% if d.links.github %}<span class="chip">⌥ {{ d.links.github }}</span>{% endif %}</div></div>
+<a class="btn" href="{{ url_for('recommendations') }}">View job matches →</a></div></div>
+<div class="grid g3">
+<div class="card center">{{ ring(d.confidence, 'Role confidence') }}<h3 style="margin-top:14px">{{ d.category }}</h3></div>
+<div class="card center">{{ ring(d.ats, 'Resume quality') }}<p class="muted small" style="margin-top:14px">{{ d.word_count }} words</p></div>
+<div class="card"><h2>Top predicted roles</h2>{% for c in d.categories %}<div class="brow"><div class="row"><span>{{ c.name }}</span><b>{{ c.prob }}%</b></div><div class="bar"><i style="width:{{ c.prob }}%"></i></div></div>{% endfor %}</div></div>
+<div class="grid g2">
+<div class="card"><h2>Profile</h2><dl class="kv"><dt>Experience</dt><dd>{{ d.experience }} years</dd><dt>Education level</dt><dd>{{ d.education_level }}</dd>
+<dt>Skills found</dt><dd>{{ d.skills|length }}</dd><dt>Certifications</dt><dd>{{ d.certifications|length }}</dd></dl>
+{% if d.education %}<p class="small muted" style="margin:14px 0 4px">Education lines</p><ul class="tips small">{% for e in d.education %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+{% if d.certifications %}<p class="small muted" style="margin:14px 0 4px">Certifications</p><ul class="tips small">{% for c in d.certifications %}<li>{{ c }}</li>{% endfor %}</ul>{% endif %}</div>
+<div class="card"><h2>Sections detected</h2>{% for n, ok in d.sections.items() %}<span class="sec {{ 'yes' if ok else 'no' }}">{{ '✔' if ok else '✖' }} {{ n }}</span>{% endfor %}
+<h2 style="margin-top:20px">Quality breakdown</h2>{% for l, got, mx in d.ats_breakdown %}<div class="brow"><div class="row"><span>{{ l }}</span><b>{{ got }}/{{ mx }}</b></div><div class="bar"><i style="width:{{ (got/mx*100)|round }}%"></i></div></div>{% endfor %}</div></div>
+<div class="card"><h2>Skills by category</h2>{% for g, items in d.skill_groups.items() %}<p style="margin:8px 0 2px" class="small muted">{{ g }}</p>{{ chips(items) }}{% else %}<p class="muted">No known skills detected.</p>{% endfor %}</div>
+{% if d.tips %}<div class="card"><h2>💡 How to improve this resume</h2><ul class="tips">{% for t in d.tips %}<li>{{ t }}</li>{% endfor %}</ul></div>{% endif %}
+<div class="card" id="ai"><div class="row" style="justify-content:space-between"><div>
+<h2>🤖 AI feedback <span class="chip warn" id="aist">checking…</span></h2>
+<p class="muted small" style="margin:0">Written locally by your Ollama model. It is advisory and never changes any score.</p></div>
+<button id="aibtn">Generate feedback</button></div><div id="aiout" style="margin-top:12px"></div></div>
+<script>function add(p,t,x,c){const e=document.createElement(t);e.textContent=x;if(c)e.className=c;p.appendChild(e);return e}
+function lst(p,title,a){if(!a||!a.length)return;add(p,'div',title,'ai-h');const u=add(p,'ul','');a.forEach(x=>add(u,'li',x))}
+const st=document.getElementById('aist'),out=document.getElementById('aiout'),btn=document.getElementById('aibtn');
+fetch('/api/ai/status').then(r=>r.json()).then(s=>{st.textContent=!s.online?'Ollama offline':s.installed?s.model+' ready':s.model+' not installed';st.className='chip '+(s.online&&s.installed?'ok':'warn')});
+btn.onclick=async()=>{btn.disabled=true;out.textContent='Thinking… a 7B model on CPU can take a minute.';
+try{const r=await fetch('/api/ai/feedback',{method:'POST'});const j=await r.json();out.textContent='';
+if(j.error){add(out,'div',j.error,'flash error')}else{add(out,'p',j.summary);lst(out,'Strengths',j.strengths);lst(out,'How to improve',j.improvements);lst(out,'Likely interview questions',j.interview_questions)}}
+catch(e){out.textContent='Request failed.'}btn.disabled=false}
+</script>
+{% endblock %}

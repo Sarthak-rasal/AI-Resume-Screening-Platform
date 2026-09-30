@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block title %}Analyze Resume{% endblock %}{% block content %}
+<div class="card" style="max-width:640px;margin:auto"><h2>Analyze your resume</h2>
+<p class="muted">Upload a text-based PDF (max 40 MB). Files are processed in memory and never stored.</p>
+<form method="post" enctype="multipart/form-data"><label class="drop"><input id="f" type="file" name="resume" accept=".pdf" required>
+<div style="font-size:2rem">📄</div><b id="n">Click to choose a PDF</b><div class="muted small">or drag and drop it here</div></label>
+<button style="width:100%">Analyze resume</button></form></div>
+<script>document.getElementById('f').onchange=e=>document.getElementById('n').textContent=e.target.files[0]?e.target.files[0].name:'Click to choose a PDF'</script>
+{% endblock %}
